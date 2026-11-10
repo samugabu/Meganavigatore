@@ -1,69 +1,102 @@
-# Meganavigatore su GitHub + Cloudflare Pages
+# 🎬 Meganavigatore
 
-Cartella pronta da caricare. Contiene:
+Un'applicazione web per tenere in ordine le proprie collezioni personali: **serie TV, film, set LEGO e libri**. Funziona nel browser, con tre soli file (HTML, CSS e JavaScript), senza installare nulla e senza server: i dati restano sul tuo dispositivo.
+
+Nata da un foglio Excel (`cinema.xlsx`), che è servito come punto di partenza per riempire il database iniziale.
+
+## Cosa contiene
+
+### 🏠 Dashboard
+- Numeri principali: film visti, serie viste, libri letti, con la media dei voti.
+- Tempo dedicato: ore di film, ore di serie TV e pagine lette.
+- Classifiche con i 5 titoli più votati e i 5 più rivisti, per film e per serie.
+- Grafici dei generi più guardati, delle piattaforme e della distribuzione dei voti.
+- Riepilogo di LEGO (pezzi montati, set costruiti, wishlist) e libri.
+- Pulsante **🎲 Cosa guardo stasera?**, che pesca a caso tra i titoli "da guardare" filtrando per tipo, piattaforma, genere e tempo disponibile.
+
+### 📚 Le quattro collezioni
+- **Serie TV**, **Film**, **LEGO** e **Libri**, con schede colorate, badge per voto, stato e piattaforma.
+- Ricerca in tempo reale, filtri per genere, piattaforma, stato, saga e preferiti.
+- Ordinamento alfabetico di base, oppure per voto, genere, durata o tempo di visione.
+- Aggiunta, modifica ed eliminazione di ogni elemento.
+- Preferiti ⭐ e note personali su ogni scheda.
+
+### 📺 Stato delle serie TV
+- Ogni serie può essere **In visione**, **Pausata** o **Completata**, e puoi indicare se è ancora **in corso** (nuove stagioni in uscita).
+- Per le serie in visione o in pausa indichi stagione ed episodio raggiunti. Un pulsante "➕ Un episodio" nella dashboard li fa avanzare.
+- La dashboard ha una sezione con le serie in visione e l'avanzamento. Ore ed episodi visti si calcolano in base allo stato: le serie completate contano per intero, quelle in corso solo fino all'episodio raggiunto.
+
+### 📺 Serie TV con episodi per stagione
+- Per ogni serie puoi indicare gli episodi di ciascuna stagione e la durata di un episodio (di base 1 ora).
+- Le ore totali vengono calcolate in automatico. Dove i dati mancano, il programma usa una stima di 10 episodi per stagione e lo segnala con "≈".
+- Con una chiave API gratuita di **TMDB** i dati di una serie (stagioni, episodi, durata, genere, piattaforma) si compilano con un clic.
+
+### 👑 Saghe e franchise
+- Collega film, serie, libri e set LEGO dello stesso mondo, per esempio Harry Potter.
+- Per ogni saga: avanzamento, voto medio, tempo totale per vedere tutto, ordine di visione e "ti manca…".
+- La funzione **Rileva saghe** propone i raggruppamenti partendo dai titoli.
+
+### 📋 Progetti (Kanban)
+- Bacheca con le colonne Da fare, In corso e Completato.
+- Partecipanti del team e attività assegnate, con avanzamento in percentuale.
+- Le attività si spostano trascinandole oppure con le frecce.
+
+### 🧹 Controlla i dati
+- Trova duplicati, refusi nei titoli e dati mancanti.
+- Elenca le serie TV senza stagioni, episodi per stagione o durata dell'episodio, con filtri e accesso diretto alla modifica.
+- Offre la correzione dei refusi e una coda guidata per completare i dati un titolo alla volta.
+
+### 💾 Dati, backup e tema
+- Esporta in **JSON**, **SQL** o **Excel** e reimporta i backup (JSON o Excel).
+- Ripristino dei dati originali del file di partenza.
+- Tema chiaro e scuro.
+
+## Come scaricarlo e usarlo
+
+### Opzione 1: aprirlo online
+Se il sito è pubblicato, apri l'indirizzo del progetto (per esempio `https://NOME-PROGETTO.pages.dev`).
+
+### Opzione 2: scaricarlo sul computer
+1. Su GitHub premi il pulsante verde **Code** e scegli **Download ZIP**.
+2. Estrai lo ZIP in una cartella.
+3. Apri il file `public/index.html` con un doppio clic, usando Chrome, Edge o Firefox. I file `style.css` e `app.js` devono restare nella stessa cartella.
+
+Chi usa Git può invece clonare il repository:
+
+```
+git clone https://github.com/NOME-UTENTE/NOME-REPOSITORY.git
+```
+
+Poi apri `public/index.html` nel browser.
+
+Alla prima apertura il database si riempie con i dati iniziali. Da quel momento ogni modifica viene salvata nel browser.
+
+## Cose da sapere
+
+- **I dati sono nel browser.** Restano in quel browser e su quel dispositivo: se cambi computer, browser o cancelli i dati di navigazione, parti da zero. Usa **💾 Dati → Esporta** per fare i backup e **Importa** per ripristinarli.
+- **Chiave TMDB.** Per usare la ricerca su TMDB aprendo il file in locale, vai in **💾 Dati → 🔑 Chiave TMDB** e incolla la tua chiave gratuita (la ottieni su themoviedb.org, in Impostazioni → API). La chiave resta solo nel browser e non entra nei backup.
+- **Internet serve solo per due cose:** la ricerca su TMDB e l'esportazione o importazione in Excel, che usa una libreria caricata da internet.
+- **Privacy.** I dati di partenza del file Excel sono incorporati dentro `public/app.js`. Se il repository è pubblico, chiunque può leggere quella lista: se non vuoi, rendi il repository privato.
+
+## Com'è fatto
+
+- Tre file separati (HTML, CSS e JavaScript), senza framework e senza passaggi di compilazione.
+- Database nel browser con IndexedDB, in cinque tabelle: `serie_tv`, `film`, `lego`, `libri` e `progetti`.
+- Libreria SheetJS (da cdnjs) per i file Excel.
+- Per la versione online: una funzione di Cloudflare Pages (`functions/api/tmdb`) che fa da proxy verso TMDB, così la chiave resta sul server.
 
 ```
 public/index.html                  la pagina (struttura HTML)
 public/style.css                   l'aspetto grafico
 public/app.js                      la logica e i dati iniziali
-public/_headers                    intestazioni di sicurezza di base
-functions/api/tmdb/[[path]].js     proxy per TMDB: la chiave resta sul server
-.gitignore                         impedisce di caricare file con segreti
+public/_headers                    intestazioni di sicurezza
+functions/api/tmdb/[[path]].js     proxy per TMDB (versione online)
 ```
 
-Come funziona: il browser chiama `/api/tmdb/...` sul tuo stesso sito, la funzione aggiunge la chiave TMDB lato server e inoltra la richiesta. La chiave non compare mai nel codice, nel repository o nel browser.
+## Pubblicare online
 
-## 1. Chiave TMDB
+L'app si pubblica gratis su Cloudflare Pages collegando il repository GitHub: cartella di output `public`, comando di build vuoto, e un segreto `TMDB_API_KEY` nelle impostazioni del progetto. La procedura passo per passo è nel file `DEPLOY.md`.
 
-1. Crea un account su themoviedb.org.
-2. Impostazioni → API: richiedi la chiave per uso non commerciale e copia la "Chiave API" (v3) oppure il "Token di accesso in lettura" (v4). Vanno bene entrambi.
+## Crediti
 
-## 2. GitHub
-
-1. Crea un repository nuovo (può essere privato).
-2. "Add file" → "Upload files" e trascina dentro il contenuto di questa cartella, mantenendo le sottocartelle `public` e `functions`. Il file `.gitignore` può non comparire nelle anteprime: se non lo carichi, evita comunque di caricare file chiamati `.dev.vars` o `.env`.
-3. Conferma con "Commit changes".
-
-## 3. Cloudflare Pages
-
-I nomi dei menu possono cambiare leggermente nel tempo.
-
-1. Nel pannello Cloudflare: Workers & Pages → Create → Pages → Connect to Git, e scegli il repository.
-2. Impostazioni di build:
-   - Framework preset: None
-   - Build command: lascia vuoto
-   - Build output directory: `public`
-3. Salva e avvia il deploy.
-4. Poi vai in Settings → Variables and Secrets del progetto e aggiungi un segreto (tipo "Secret", cifrato):
-   - Nome: `TMDB_API_KEY`
-   - Valore: la tua chiave o il tuo token
-   Aggiungilo per l'ambiente Production (e Preview, se lo usi).
-5. Rifai il deploy (Deployments → Retry deployment, oppure fai un nuovo commit). Le variabili si applicano solo ai deploy successivi.
-
-## 4. Prova
-
-Apri `https://NOME-PROGETTO.pages.dev`, aggiungi o modifica una serie TV e premi "Cerca su TMDB".
-
-Messaggi possibili:
-- "Il server non ha la chiave TMDB": il segreto non è stato aggiunto, o manca il nuovo deploy.
-- "Imposta la chiave TMDB...": la funzione non è stata trovata. Controlla che la cartella `functions` sia nella radice del repository, non dentro `public`.
-- "Troppe richieste": TMDB ha risposto 429. L'app aspetta e riprova una volta.
-
-## Aggiornare l'app
-
-Quando ricevi file nuovi, sostituisci quelli corrispondenti in `public/` su GitHub (`index.html`, `style.css` e `app.js`). Cloudflare ripubblica da solo.
-
-## Sicurezza, in breve
-
-- Non scrivere mai la chiave in un file del repository. Per provare in locale, crea un file `.dev.vars` con la riga `TMDB_API_KEY=...` (è già ignorato da Git) e avvia `npx wrangler pages dev public`.
-- Se una chiave finisce per sbaglio su GitHub, rigenerala dal pannello TMDB: resta nella cronologia anche se cancelli il file.
-- Il proxy accetta solo la ricerca serie e i dettagli di una serie, rifiuta le richieste da altri siti web e passa a TMDB solo i parametri `query`, `language` e `page`. Non ferma però chi lo chiama con strumenti da riga di comando: chi conosce l'indirizzo potrebbe consumare le richieste gratuite del piano Workers. Per un uso personale è un rischio piccolo; se vuoi ridurlo, aggiungi una regola di rate limiting in Cloudflare o limita l'accesso al sito.
-- Pages gratuito: build limitate al mese e richieste statiche illimitate, mentre le funzioni contano sulla quota giornaliera di Workers. Controlla i valori aggiornati nel pannello di Cloudflare.
-
-## TMDB: attribuzione
-
-L'uso gratuito è per progetti non commerciali e richiede di citare TMDB. In fondo alla pagina c'è già l'avviso richiesto. Scarica il logo ufficiale dalla pagina dei loghi di TMDB e salvalo come `public/tmdb-logo.svg`: se il file manca, l'immagine non viene mostrata e resta solo il testo.
-
-## Cosa NON cambia
-
-I dati (film, serie, LEGO, libri, progetti) restano nel browser di chi usa il sito, in IndexedDB. Su un altro dispositivo i dati saranno vuoti. Usa Esporta/Importa dal menu Dati per spostare un backup.
+I dati delle serie TV provengono da TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.
