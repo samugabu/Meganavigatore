@@ -1,28 +1,20 @@
 <!DOCTYPE html>
-    <html lang="it"><head><meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Meganavigatore</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-</head>
-<body>
-    <header>
-        <span class="logo">🎬 Meganavigatore</span>
-        <nav id="nav"></nav>
-        <input id="q" type="search" placeholder="🔍 Cerca…">
-        <button id="add" class="pri">➕ Aggiungi</button>
-        <details id="mn"><summary>💾 Dati</summary><div>
-        <button data-x="json">⬇️ Esporta JSON</button><button data-x="sql">⬇️ Esporta SQL</button><button data-x="xlsx">⬇️ Esporta Excel</button>
-        <button data-x="tmdb">🔑 Chiave TMDB</button><button data-x="imp">⬆️ Importa backup (JSON/Excel)</button><button data-x="reset" class="dg">↺ Ripristina dati originali</button>
-        </div></details>
-        <button id="th" title="Tema">🌓</button>
-        <input id="fi" type="file" accept=".json,.xlsx" hidden>
-    </header>
-    <main id="main">
-
-    </main>
-        <footer class="tmf"><img src="tmdb-logo.svg" alt="TMDB" height="16" onerror="this.remove()"><span>This product uses the TMDB API but is not endorsed or certified by TMDB.</span></footer>
-        <dialog id="dlg"></dialog><datalist id="pls"></datalist><datalist id="sgl"></datalist><datalist id="gnl"></datalist><div id="toast"></div>
-</body>
-</html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meganavigatore</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="style.css"></head><body>
+<header><span class="logo">🎬 Meganavigatore</span>
+<nav id="nav"></nav>
+<input id="q" type="search" placeholder="🔍 Cerca…">
+<button id="add" class="pri">➕ Aggiungi</button>
+<details id="mn"><summary>💾 Dati</summary><div>
+<button data-x="json">⬇️ Esporta JSON</button><button data-x="sql">⬇️ Esporta SQL</button><button data-x="xlsx">⬇️ Esporta Excel</button>
+<button data-x="tmdb">🔑 Chiave TMDB</button><button data-x="imp">⬆️ Importa backup (JSON/Excel)</button><button data-x="reset" class="dg">↺ Ripristina dati originali</button>
+</div></details>
+<button id="th" title="Tema">🌓</button>
+<input id="fi" type="file" accept=".json,.xlsx" hidden></header>
+<main id="main"></main>
+<footer class="tmf"><img src="tmdb-logo.svg" alt="TMDB" height="16" onerror="this.remove()"><span>This product uses the TMDB API but is not endorsed or certified by TMDB.</span></footer>
+<dialog id="dlg"></dialog><datalist id="pls"></datalist><datalist id="sgl"></datalist><datalist id="gnl"></datalist><div id="toast"></div>
+<script src="app.js"></script></body></html>

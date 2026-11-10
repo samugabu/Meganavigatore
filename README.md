@@ -3,7 +3,9 @@
 Cartella pronta da caricare. Contiene:
 
 ```
-public/index.html                  l'app (un solo file)
+public/index.html                  la pagina (struttura HTML)
+public/style.css                   l'aspetto grafico
+public/app.js                      la logica e i dati iniziali
 public/_headers                    intestazioni di sicurezza di base
 functions/api/tmdb/[[path]].js     proxy per TMDB: la chiave resta sul server
 .gitignore                         impedisce di caricare file con segreti
@@ -49,7 +51,7 @@ Messaggi possibili:
 
 ## Aggiornare l'app
 
-Quando ricevi un nuovo `index.html`, sostituisci il file `public/index.html` su GitHub. Cloudflare ripubblica da solo.
+Quando ricevi file nuovi, sostituisci quelli corrispondenti in `public/` su GitHub (`index.html`, `style.css` e `app.js`). Cloudflare ripubblica da solo.
 
 ## Sicurezza, in breve
 

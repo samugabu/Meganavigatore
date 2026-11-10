@@ -48,6 +48,7 @@ main{max-width:1200px;margin:0 auto;padding:18px 16px 60px}
 .dn div:first-child{width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--g));mask:radial-gradient(circle 46px,transparent 98%,#000 100%);-webkit-mask:radial-gradient(circle 46px,transparent 98%,#000 100%)}
 .dn p{margin:3px 0;font-size:.85rem}.dn p::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c);margin-right:6px}
 .empty{text-align:center;padding:50px;color:var(--mut)}
+.bb{background:#dbeafe;color:#1e40af}
 .tmf{max-width:1200px;margin:0 auto;padding:0 16px 30px;color:var(--mut);font-size:.8rem;display:flex;gap:10px;align-items:center}
 .eprow{display:inline-flex;align-items:center;gap:6px;margin:4px 10px 4px 0;font-weight:700}
 dialog .eprow input{width:72px;margin:0}
