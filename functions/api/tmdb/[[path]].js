@@ -1,4 +1,4 @@
-const CONSENTITI=[/^search\/tv$/,/^tv\/\d+$/];
+const CONSENTITI=[/^search\/(tv|movie)$/,/^(tv|movie)\/\d+$/];
 const json=(o,s)=>new Response(JSON.stringify(o),{status:s,headers:{"Content-Type":"application/json"}});
 
 export async function onRequestGet({request,env,params}){
