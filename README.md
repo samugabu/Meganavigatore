@@ -21,12 +21,12 @@ Nata da un foglio Excel (`cinema.xlsx`), che è servito come punto di partenza p
 - Aggiunta, modifica ed eliminazione di ogni elemento.
 - Preferiti e note personali su ogni scheda.
 
-### 📺 Stato delle serie TV
+### Stato delle serie TV
 - Ogni serie può essere **In visione**, **Pausata** o **Completata**, e puoi indicare se è ancora **in corso** (nuove stagioni in uscita).
 - Per le serie in visione o in pausa indichi stagione ed episodio raggiunti. Un pulsante " + Un episodio" nella dashboard li fa avanzare.
 - La dashboard ha una sezione con le serie in visione e l'avanzamento. Ore ed episodi visti si calcolano in base allo stato: le serie completate contano per intero, quelle in corso solo fino all'episodio raggiunto.
 
-### 📺 Serie TV con episodi per stagione
+### Serie TV con episodi per stagione
 - Per ogni serie puoi indicare gli episodi di ciascuna stagione e la durata di un episodio (di base 1 ora).
 - Le ore totali vengono calcolate in automatico. Dove i dati mancano, il programma usa una stima di 10 episodi per stagione e lo segnala con "≈".
 - Con una chiave API gratuita di **TMDB** i dati di una serie (stagioni, episodi, durata, genere, piattaforma) si compilano con un clic.
