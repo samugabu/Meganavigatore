@@ -1,13 +1,13 @@
 const TM="https://api.themoviedb.org/3";
 const tmKey=()=>{try{return localStorage.getItem("mn_tmdb")||""}catch(x){return ""}};
-const tmErr=x=>({nokey:"Imposta la chiave TMDB dal menu Dati → 🔑 Chiave TMDB (oppure configura il proxy sul server).",net:"Impossibile contattare TMDB: controlla la connessione. Dentro claude.ai le chiamate esterne sono bloccate: scarica il file e aprilo dal computer.",auth:"Chiave TMDB non valida o scaduta.",notfound:"Non trovato su TMDB.",forbidden:"Richiesta rifiutata dal server.",proxy:"Il server non ha la chiave TMDB: aggiungi il segreto TMDB_API_KEY su Cloudflare e rifai il deploy.",rate:"Troppe richieste a TMDB: riprova tra "+((x&&x.wait)||"qualche")+" secondi.",http:"TMDB ha risposto con un errore ("+(x&&x.status)+")."}[x&&x.code]||"Errore imprevisto durante la chiamata a TMDB.");
-async function tmGet(path,params,retry=1){const k=tmKey(),h={Accept:"application/json"},q={language:"it-IT",...(params||{})};
-let u;if(k){u=new URL(TM+path);if(k.startsWith("eyJ"))h.Authorization="Bearer "+k;else q.api_key=k}else u=new URL("/api/tmdb"+path,location.href);
+const tmErr=x=>({nokey:"Imposta la chiave TMDB dal menu Dati → 🔑 Chiave TMDB.",net:"Impossibile contattare TMDB: controlla la connessione a internet. Se usi la pagina dentro claude.ai le chiamate esterne sono bloccate: apri il file dal computer.",auth:"Chiave TMDB non valida o scaduta.",notfound:"Non trovato su TMDB.",rate:"Troppe richieste a TMDB: riprova tra "+((x&&x.wait)||"qualche")+" secondi.",http:"TMDB ha risposto con un errore ("+(x&&x.status)+")."}[x&&x.code]||"Errore imprevisto durante la chiamata a TMDB.");
+async function tmGet(path,params,retry=1){const k=tmKey();if(!k)throw{code:"nokey"};
+const h={Accept:"application/json"},q={language:"it-IT",...(params||{})},u=new URL(TM+path);
+if(k.startsWith("eyJ"))h.Authorization="Bearer "+k;else q.api_key=k;
 Object.entries(q).forEach(([a,b])=>u.searchParams.set(a,b));
-let r;try{r=await fetch(u.toString(),{headers:h})}catch(x){throw{code:k?"net":"nokey"}}
-if(!k&&r.status==404&&!(r.headers.get("content-type")||"").includes("json"))throw{code:"nokey"};
+let r;try{r=await fetch(u.toString(),{headers:h})}catch(x){throw{code:"net"}}
 if(r.status==429){const w=Math.min(+r.headers.get("Retry-After")||2,10);if(retry){await new Promise(o=>setTimeout(o,w*1000));return tmGet(path,params,0)}throw{code:"rate",wait:w}}
-if(r.status==401)throw{code:"auth"};if(r.status==403&&!k)throw{code:"forbidden"};if(r.status==404)throw{code:"notfound"};if(r.status==500&&!k)throw{code:"proxy"};if(!r.ok)throw{code:"http",status:r.status};
+if(r.status==401)throw{code:"auth"};if(r.status==404)throw{code:"notfound"};if(!r.ok)throw{code:"http",status:r.status};
 return r.json()}
 const curTable=()=>fm.id?fm.n:($("#ft")?$("#ft").value:fm.n);
 const tmKind=n=>n=="film"?"movie":"tv";
