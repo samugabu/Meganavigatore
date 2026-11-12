@@ -1,4 +1,4 @@
-# Pubblicare il Meganavigatore su GitHub + Cloudflare Pages
+# Pubblicare il Meganavigatore su GitHub
 
 Come funziona: il browser chiama `/api/...` sul tuo stesso sito, e una piccola funzione aggiunge la chiave del servizio lato server e inoltra la richiesta. Le chiavi non compaiono mai nel codice, nel repository o nel browser.
 
