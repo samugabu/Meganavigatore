@@ -8,7 +8,7 @@ if(Array.isArray(x.episodi_stagioni)&&(!x.lunghezza_stagioni||/stagion/i.test(x.
 if(n=="libri"&&x.data_inizio&&x.data_fine&&x.giorni_lettura==null)x.giorni_lettura=Math.round((new Date(x.data_fine)-new Date(x.data_inizio))/864e5)+1;
 await dbPut(n,x);D[n]=fm.id?D[n].map(y=>y.id==x.id?x:y):[...D[n],x];$("#dlg").close();if(st.tab!=n&&!fm.id&&st.tab!="saghe")go(n);else render();toast("Salvato ✓")}
 async function del(b){if(!b.dataset.s){b.dataset.s=1;b.textContent="❗ Confermi?";setTimeout(()=>{if(b.isConnected){delete b.dataset.s;b.textContent="🗑️ Elimina"}},3000);return}
-const n=b.dataset.t||st.tab,id=+b.dataset.del;await dbDel(n,id);D[n]=D[n].filter(x=>x.id!=id);render();toast("Elemento eliminato")}
+const n=b.dataset.t||st.tab,id=+b.dataset.del,old=D[n].find(x=>x.id==id);await dbDel(n,id);D[n]=D[n].filter(x=>x.id!=id);render();toastUndo("Elemento eliminato",async()=>{await dbPut(n,old);D[n].push(old);render()})}
 function pform(h,v,fn){$("#dlg").innerHTML=`<h2>${h}</h2><label>Nome *<input id="pt" value="${e(v)}"></label><div class="act"><button id="sv" class="pri">💾 Salva</button><button id="cx">Annulla</button></div>`;$("#cx").onclick=()=>$("#dlg").close();$("#sv").onclick=()=>{const t=$("#pt").value.trim();if(!t){toast("Il titolo è obbligatorio");return}$("#dlg").close();fn(t)};$("#dlg").showModal()}
 function tform(a,k){const p=curP();$("#dlg").innerHTML=`<h2>${a?"✏️ Modifica attività":"➕ Nuova attività"}</h2><label>Testo *<input id="tt" value="${e(a?a.testo:"")}"></label><label>Stato<select id="ts">${ST.map(s=>`<option value="${s[0]}"${(a?a.stato:k)==s[0]?" selected":""}>${s[1]}</option>`).join("")}</select></label><div id="ta">${p.team.length?p.team.map(m=>`<label class="cb"><input type="checkbox" value="${e(m)}"${a&&a.assegnati.includes(m)?" checked":""}> 👤 ${e(m)}</label>`).join(""):"<small>Aggiungi prima i partecipanti nella sezione Team.</small>"}</div><div class="act"><button id="sv" class="pri">💾 Salva</button><button id="cx">Annulla</button></div>`;
 $("#cx").onclick=()=>$("#dlg").close();$("#sv").onclick=async()=>{const t=$("#tt").value.trim();if(!t){toast("Il testo è obbligatorio");return}const o=a||{id:Date.now().toString(36)+Math.random().toString(36).slice(2,5)};o.testo=t;o.stato=$("#ts").value;o.assegnati=[...document.querySelectorAll("#ta input:checked")].map(i=>i.value);if(!a)p.attivita.push(o);await savP(p);$("#dlg").close();render()};$("#dlg").showModal()}
@@ -16,12 +16,12 @@ async function pact(b){const d=b.dataset,p=curP(),a=p&&p.attivita.find(x=>x.id==
 if(d.pa=="open"){st.pj=+d.i;render()}
 else if(d.pa=="back"){st.pj=null;render()}
 else if(d.pa=="newp")pform("➕ Nuovo progetto","",async v=>{const x={titolo:v,team:[],attivita:[]};await dbPut("progetti",x);D.progetti.push(x);render();toast("Progetto creato ✓")});
-else if(d.pa=="delp"){if(sure(b,"🗑️ Elimina")){await dbDel("progetti",+d.i);D.progetti=D.progetti.filter(x=>x.id!=d.i);render();toast("Progetto eliminato")}}
+else if(d.pa=="delp"){if(sure(b,"🗑️ Elimina")){const old=D.progetti.find(x=>x.id==d.i);await dbDel("progetti",+d.i);D.progetti=D.progetti.filter(x=>x.id!=d.i);render();toastUndo("Progetto eliminato",async()=>{await dbPut("progetti",old);D.progetti.push(old);render()})}}
 else if(d.pa=="addm"){const v=$("#tm").value.trim();if(v&&!p.team.includes(v)){p.team.push(v);await savP(p);render()}}
 else if(d.pa=="rmm"){const m=p.team[d.i];p.team.splice(d.i,1);p.attivita.forEach(x=>x.assegnati=x.assegnati.filter(n=>n!=m));await savP(p);render()}
 else if(d.pa=="newt")tform(null,d.k);
 else if(d.pa=="edt")tform(a,a.stato);
-else if(d.pa=="delt"){if(sure(b,"🗑️")){p.attivita=p.attivita.filter(x=>x.id!=d.i);await savP(p);render()}}
+else if(d.pa=="delt"){if(sure(b,"🗑️")){const old=p.attivita.slice();p.attivita=p.attivita.filter(x=>x.id!=d.i);await savP(p);render();toastUndo("Attività eliminata",async()=>{p.attivita=old;await savP(p);render()})}}
 else if(d.pa=="mv"){const i=ST.findIndex(s=>s[0]==a.stato)+ +d.k;if(ST[i]){a.stato=ST[i][0];await savP(p);render()}}}
 async function fav(id,t){const n=t||st.tab,x=D[n].find(y=>y.id==id);x.preferito=!x.preferito;await dbPut(n,x);render()}
 function pick(){const lib=[...D.film,...D.serie_tv],ps=[...new Set(lib.map(x=>x.piattaforma).filter(Boolean))].sort(),gs=[...new Set(lib.flatMap(x=>(x.genere||"").split(",").map(s=>s.trim()).filter(Boolean)))].sort();let last=null;
@@ -32,7 +32,7 @@ const c=[...D.film.map(x=>({x,k:"film"})),...D.serie_tv.map(x=>({x,k:"serie_tv"}
 if(!c.length){$("#pr").innerHTML=`<p class="note">Nessun titolo da guardare con questi filtri 😕</p>`;return}
 const o=c.length>1?c.filter(a=>a.x!==last):c,r=o[Math.floor(Math.random()*o.length)],x=r.x;last=x;
 const mis=[["genere",x.genere],["piattaforma",x.piattaforma],...(r.k=="film"?[["durata",x.durata]]:[])].filter(a=>!a[1]).map(a=>a[0]);
-$("#pr").innerHTML=`<div class="card" style="--a:${T[r.k].c};margin:12px 0"><div class="top"><span class="ic">${gi(x.genere)}</span><h3>${e(x.titolo)}</h3></div><div class="row"><span class="bd bp">${T[r.k].i} ${T[r.k].n}</span>${pb(x.piattaforma)}${x.durata?`<span class="ch">⏱️ ${x.durata} min</span>`:""}</div><div class="row">${(x.genere||"").split(",").filter(Boolean).map(s=>`<span class="ch">${e(s.trim())}</span>`).join("")}</div>${x.note?`<p class="note">📝 ${e(x.note)}</p>`:""}${mis.length?`<small>ℹ️ Mancano: ${mis.join(", ")}. Aggiungili con Modifica per filtrare meglio.</small>`:""}<small>Scelto tra ${c.length} titoli</small></div>`;
+$("#pr").innerHTML=`<div class="card" style="--a:${T[r.k].c};margin:12px 0"><div class="top"><span class="ic">${gi(x.genere)}</span><h3>${e(x.titolo)}</h3></div><div class="row"><span class="bd bp">${T[r.k].i} ${T[r.k].n}</span>${pb(x.piattaforma)}${x.dove_guardarlo?`<span class="ch">🍿 ${e(x.dove_guardarlo)}</span>`:""}${x.durata?`<span class="ch">⏱️ ${x.durata} min</span>`:""}</div><div class="row">${(x.genere||"").split(",").filter(Boolean).map(s=>`<span class="ch">${e(s.trim())}</span>`).join("")}</div>${x.note?`<p class="note">📝 ${e(x.note)}</p>`:""}${mis.length?`<small>ℹ️ Mancano: ${mis.join(", ")}. Aggiungili con Modifica per filtrare meglio.</small>`:""}<small>Scelto tra ${c.length} titoli</small></div>`;
 $("#pgo").textContent="🎲 Un altro"};
 $("#dlg").showModal()}
 async function svact(b){const d=b.dataset;

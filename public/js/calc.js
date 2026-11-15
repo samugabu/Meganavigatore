@@ -23,3 +23,4 @@ const missingOf=it=>[...watchList(it).filter(([n,x])=>!doneOf(n,x)),...grpOf(it,
 const inLettura=x=>x.stato_lettura=="in_lettura"||x.stato_lettura=="pausa";
 const pagesRead=x=>x.stato_da_leggere?0:inLettura(x)?Math.min(+x.pagina_corrente||0,+x.pagine||Infinity):(+x.pagine||0);
 const bkLine=x=>inLettura(x)&&+x.pagina_corrente>0?"pagina "+x.pagina_corrente+(x.pagine?"/"+x.pagine+" · "+Math.min(100,Math.round(x.pagina_corrente/x.pagine*100))+"%":""):null;
+const PRI=x=>({alta:3,media:2,bassa:1})[x.priorita]||0;

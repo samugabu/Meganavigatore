@@ -5,7 +5,8 @@ const fd=d=>d?new Date(d).toLocaleDateString("it-IT"):null;
 const rc=v=>v>=9?"r9":v>=8?"r8":v>=7?"r7":"r6";
 const rb=v=>v==null?"":`<span class="rt ${rc(v)}">★ ${(+v).toFixed(1)}</span>`;
 const pb=p=>p?`<span class="pl" style="--c:${(PLT[p]||[0,"#64748b"])[1]}">${(PLT[p]||["📡"])[0]} ${e(p)}</span>`:"";
-function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("show"),2800)}
+function toast(m){const t=$("#toast");t.textContent=m;t.style.pointerEvents="";t.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("show"),2800)}
+function toastUndo(m,fn){const t=$("#toast");t.innerHTML=e(m)+' <button id="undob">Annulla</button>';t.style.pointerEvents="auto";t.classList.add("show");clearTimeout(toast.h);const hide=()=>{t.classList.remove("show");t.style.pointerEvents=""};toast.h=setTimeout(hide,8000);$("#undob").onclick=async()=>{clearTimeout(toast.h);hide();await fn()}}
 const sel=(k,arr,all)=>`<select data-k="${k}"><option value="">${all}</option>${arr.map(v=>`<option${st[k]==v?" selected":""}>${e(v)}</option>`).join("")}</select>`;
 const bars=r=>{const mx=Math.max(1,...r.map(a=>a[1]));return r.map(([l,c])=>`<div class="br"><span>${l}</span><i style="--w:${c/mx*100}%"></i><b>${c}</b></div>`).join("")||"<p>Nessun dato</p>"};
 const sure=(b,l)=>{if(b.dataset.s)return true;b.dataset.s=1;b.textContent="❗ Confermi?";setTimeout(()=>{if(b.isConnected){delete b.dataset.s;b.textContent=l}},3000);return false};
