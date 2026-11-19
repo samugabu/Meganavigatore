@@ -2,7 +2,7 @@ const VER=2;
 const MIGR={1:d=>{(d.serie_tv||[]).forEach(x=>{if(typeof x.episodi_stagioni=="string")x.episodi_stagioni=x.episodi_stagioni.split(",").map(v=>+v||0)});return d}};
 const getCfg=()=>{try{return JSON.parse(localStorage.getItem("mn_cfg")||"{}")}catch(x){return{}}};
 const setCfg=o=>{try{localStorage.setItem("mn_cfg",JSON.stringify({...getCfg(),...o}))}catch(x){}};
-const packBackup=()=>({app:"meganavigatore",versione:VER,esportato:new Date().toISOString(),impostazioni:getCfg(),tabelle:{serie_tv:D.serie_tv,film:D.film,lego:D.lego,libri:D.libri,progetti:D.progetti}});
+const packBackup=()=>({app:"meganavigatore",app_versione:APP_VERSION,versione:VER,esportato:new Date().toISOString(),impostazioni:getCfg(),tabelle:{serie_tv:D.serie_tv,film:D.film,animazione:D.animazione,lego:D.lego,libri:D.libri,progetti:D.progetti,note:D.note}});
 function unpackBackup(o){let v=1,t=o;if(o&&o.tabelle&&typeof o.tabelle=="object"){v=+o.versione||1;t=o.tabelle}
 if(v>VER)throw{code:"newer"};for(let i=v;i<VER;i++)if(MIGR[i])t=MIGR[i](t);
 return{tabelle:t,impostazioni:(o&&o.impostazioni)||null,versione:v,esportato:(o&&o.esportato)||null}}
@@ -29,7 +29,7 @@ async function autoWrite(){if(!AUTO.h||!AUTO.on)return;
 try{const w=await AUTO.h.createWritable();await w.write(JSON.stringify(packBackup(),null,1));await w.close();AUTO.last=Date.now();markBackup();AUTO.err=null}
 catch(x){AUTO.err=String(x&&x.message||x);AUTO.on=false;toast("Salvataggio automatico interrotto: "+AUTO.err)}}
 const autoSoon=()=>{if(!AUTO.on)return;clearTimeout(AUTO.t);AUTO.t=setTimeout(autoWrite,1500)};
-function previewImport(ok,meta,after){const lab=n=>n=="progetti"?"Progetti":T[n].n,ic=n=>n=="progetti"?"📋":T[n].i;
+function previewImport(ok,meta,after){const lab=n=>n=="progetti"?"Progetti":n=="note"?"Note":T[n].n,ic=n=>n=="progetti"?"📋":n=="note"?"📝":T[n].i;
 $("#dlg").innerHTML=`<h2>📥 Importare questi dati?</h2><p><small>Le tabelle del file sostituiranno quelle attuali. Le altre restano come sono.</small></p><div class="pn">${Object.keys(ok).map(n=>`<div class="st"><span>${ic(n)} ${lab(n)}</span><b>${(D[n]||[]).length} → ${ok[n].length}</b></div>`).join("")}</div>${meta&&meta.esportato?`<p><small>Backup del ${new Date(meta.esportato).toLocaleString("it-IT")}${meta.versione<VER?" · formato più vecchio, verrà aggiornato":""}</small></p>`:""}<div class="act" style="margin-top:14px"><button id="pvok" class="pri">✅ Sostituisci</button><button id="cx">Annulla</button></div>`;
 $("#cx").onclick=()=>$("#dlg").close();
 $("#pvok").onclick=async()=>{$("#dlg").close();await replaceAll(ok);if(meta&&meta.impostazioni)setCfg(meta.impostazioni);if(after)await after();go(st.tab);toast("Backup importato ✓: "+Object.keys(ok).map(n=>lab(n)+" "+ok[n].length).join(", "))};

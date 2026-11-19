@@ -4,18 +4,19 @@
 <title>Meganavigatore</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="style.css"></head><body>
-<header><span class="logo">🎬 Meganavigatore</span>
-<nav id="nav"></nav>
+<header><button id="side-t" title="Menu laterale (M)" aria-label="Apri o chiudi il menu laterale">☰</button><span class="logo">🎬 Meganavigatore</span><span class="sp"></span>
 <input id="q" type="search" placeholder="🔍 Cerca…">
 <button id="add" class="pri">➕ Aggiungi</button>
 <details id="mn"><summary>💾 Dati</summary><div>
-<button data-x="prot">🛡️ Protezione dati</button><button data-x="json">⬇️ Esporta JSON</button><button data-x="sql">⬇️ Esporta SQL</button><button data-x="xlsx">⬇️ Esporta Excel</button>
+<button data-x="prot">🛡️ Protezione dati</button><button data-x="ics">📅 Esporta uscite (.ics)</button><button data-x="json">⬇️ Esporta JSON</button><button data-x="sql">⬇️ Esporta SQL</button><button data-x="xlsx">⬇️ Esporta Excel</button>
 <button data-x="tmdb">🔑 Chiave TMDB</button><button data-x="rb">🔑 Chiave Rebrickable</button><button data-x="imp">⬆️ Importa backup (JSON/Excel)</button><button data-x="reset" class="dg">↺ Ripristina dati originali</button>
 </div></details>
+<button id="kbd" title="Scorciatoie da tastiera (?)">⌨️</button>
 <button id="th" title="Tema">🌓</button>
 <input id="fi" type="file" accept=".json,.xlsx" hidden></header>
-<main id="main"></main>
-<footer class="tmf"><img src="tmdb-logo.svg" alt="TMDB" height="16" onerror="this.remove()"><span>This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data provided by JustWatch.</span></footer>
+<aside id="side"><nav id="nav"></nav></aside><div id="scrim"></div>
+<div id="wrap"><main id="main"></main>
+<footer class="tmf"><img src="tmdb-logo.svg" alt="TMDB" height="16" onerror="this.remove()"><span>This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data provided by JustWatch.</span></footer></div>
 <dialog id="dlg"></dialog><datalist id="pls"></datalist><datalist id="sgl"></datalist><datalist id="gnl"></datalist><div id="toast"></div>
 <script src="js/seed.js"></script>
 <script src="js/data.js"></script>
@@ -32,4 +33,10 @@
 <script src="js/bulk.js"></script>
 <script src="js/libri.js"></script>
 <script src="js/lego.js"></script>
+<script src="js/gusti.js"></script>
+<script src="js/statistiche.js"></script>
+<script src="js/calendario.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/codice.js"></script>
+<script src="js/tastiera.js"></script>
 <script src="js/main.js"></script></body></html>

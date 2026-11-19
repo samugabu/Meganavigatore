@@ -4,11 +4,11 @@ const STOPW=new Set("il lo la i gli le un uno una di del dello della dei degli d
 const tok=t=>new Set(String(fixT(t)).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim().split(" ").filter(w=>w&&!STOPW.has(w)));
 const jac=(a,b)=>{if(!a.size||!b.size)return 0;let i=0;a.forEach(w=>{if(b.has(w))i++});return i/(a.size+b.size-i)};
 const bestOf=(q,res)=>{const A=tok(q),sc=res.map(r=>Math.max(0,...[r.name,r.title,r.original_name,r.original_title].filter(Boolean).map(t=>jac(A,tok(t)))));const ex=sc.findIndex(s=>s>=0.999);if(ex>=0)return res[ex];return res.length&&sc[0]>=0.75?res[0]:null};
-const BKCAT=[["serie_tv","📺","Serie TV"],["film","🎬","Film"],["libri","📚","Libri"],["lego","🧱","LEGO"]];
-const BKDELAY={serie_tv:250,film:250,libri:1100,lego:1100};
+const BKCAT=[["serie_tv","📺","Serie TV"],["film","🎬","Film"],["animazione","🎞️","Animazione"],["libri","📚","Libri"],["lego","🧱","LEGO"]];
+const BKDELAY={serie_tv:250,film:250,animazione:250,libri:1100,lego:1100};
 const bkKeyOk=n=>n=="libri"?true:n=="lego"?!!rbKey():!!tmKey();
 const bkErrFn=n=>n=="lego"?rbErr:n=="libri"?olErr:tmErr;
-const needsBulk=(n,x)=>n=="serie_tv"?(!epExact(x)||!(+x.durata_episodio>0)||!x.genere||!x.anno||!x.copertina):n=="film"?(!x.durata||!x.genere||!x.anno||!x.copertina):n=="libri"?(!x.pagine||!x.autore||!x.anno||!x.copertina):n=="lego"?(!!String(x.codice_set||"").trim()&&(!x.pezzi||!x.immagine||!x.anno)):false;
+const needsBulk=(n,x)=>n=="serie_tv"?(!epExact(x)||!(+x.durata_episodio>0)||!x.genere||!x.anno||!x.copertina):isFilm(n)?(!x.durata||!x.genere||!x.anno||!x.copertina):n=="libri"?(!x.pagine||!x.autore||!x.anno||!x.copertina):n=="lego"?(!!String(x.codice_set||"").trim()&&(!x.pezzi||!x.immagine||!x.anno)):false;
 const bulkItems=ns=>ns.flatMap(n=>D[n].filter(x=>needsBulk(n,x)).map(x=>[n,x]));
 function bulkSection(){const c=BKCAT.map(([n,i,l])=>[l,bulkItems([n]).length]),tot=c.reduce((s,a)=>s+a[1],0);
 return acc("🔎 Compila automaticamente ("+tot+" titoli)",tot?`<div class="pn"><p style="margin:0 0 10px">Completa in automatico i dati mancanti: TMDB per serie e film, Open Library per i libri, Rebrickable per i LEGO. Compila solo i campi vuoti e non cambia i titoli. Da completare: ${c.filter(a=>a[1]).map(a=>"<b>"+a[1]+"</b> "+a[0].toLowerCase()).join(", ")}.</p><button class="pri" data-bulk="open">▶ Compila automaticamente…</button></div>`:"<p>Tutto completo 👍</p>")+liveSection()}
@@ -22,10 +22,10 @@ $("#dlg").innerHTML=`<h2>🔎 Compila automaticamente</h2><div class="pg"><i id=
 bulkRun(items)}
 const bulkUi=(i,t,title,S)=>{const b=$("#bkbar");if(!b)return;b.style.setProperty("--w",Math.round(i/t*100)+"%");$("#bkt").textContent=(i+1)+" di "+t+" · "+title;$("#bkc").textContent="✅ "+S.ok+" compilati · ⚠️ "+S.rev+" da verificare · ❌ "+S.nf+" non trovati · ⛔ "+S.err+" errori"};
 async function tmMerge(n,x,f){
-if(n=="film"){if(!x.durata&&f.durata)x.durata=f.durata}
+if(isFilm(n)){if(!x.durata&&f.durata)x.durata=f.durata}
 else{if(f.episodi_stagioni&&f.episodi_stagioni.length&&!epExact(x))x.episodi_stagioni=f.episodi_stagioni;if(!(+x.durata_episodio>0)&&f.durata_episodio)x.durata_episodio=f.durata_episodio;if(!x.piattaforma&&f.piattaforma)x.piattaforma=f.piattaforma;if(x.in_corso==null&&f.in_corso!=null)x.in_corso=f.in_corso;
 const m=epMatch(x),cur=m&&/^s/i.test(m[2])?+m[1]:0,ns=f.episodi_stagioni?f.episodi_stagioni.length:0;if(!x.lunghezza_stagioni||(ns>cur&&(!m||/^s/i.test(m[2]))))x.lunghezza_stagioni=f.lunghezza_stagioni||x.lunghezza_stagioni}
-if(!x.genere&&f.genere)x.genere=f.genere;if(!x.anno&&f.anno)x.anno=f.anno;if(!x.copertina&&f.copertina)x.copertina=f.copertina;if(f.dove)x.dove_guardarlo=f.dove;if(n!="film"){x.prossima_data=f.prossima_data||null;x.prossima_info=f.prossima_info||null}x.tmdb_id=f.tmdb_id;await dbPut(n,x)}
+if(!x.genere&&f.genere)x.genere=f.genere;if(!x.anno&&f.anno)x.anno=f.anno;if(!x.copertina&&f.copertina)x.copertina=f.copertina;if(f.dove)x.dove_guardarlo=f.dove;if(!isFilm(n)){x.prossima_data=f.prossima_data||null;x.prossima_info=f.prossima_info||null}x.tmdb_id=f.tmdb_id;await dbPut(n,x)}
 async function bulkLego(x){const c=String(x.codice_set).trim(),num=/-/.test(c)?c:c+"-1";let d;
 try{d=await rbGet("/lego/sets/"+encodeURIComponent(num)+"/")}catch(err){if(err.code=="notfound")return"nf";throw err}
 if(!x.pezzi&&d.num_parts)x.pezzi=d.num_parts;if(!x.immagine&&d.set_img_url)x.immagine=d.set_img_url;if(!x.anno&&d.year)x.anno=d.year;await dbPut("lego",x);return"ok"}
