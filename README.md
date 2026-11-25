@@ -1,4 +1,4 @@
-# Meganavigatore
+# Base dei Nerd
 
 Un'applicazione web per tenere in ordine le proprie collezioni personali: **serie TV, film, film d'animazione, set LEGO, libri e appunti**. Funziona nel browser, senza installare nulla e senza server: i dati restano sul tuo dispositivo.
 
