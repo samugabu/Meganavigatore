@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+  <html lang="it" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#4f6bff">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>MyMultyScreen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+  <body>
+  <div id="auth-gate" aria-modal="true" role="dialog"></div>
+  <header>
+    <button id="side-t" title="Menu laterale (M)" aria-label="Apri o chiudi il menu laterale">☰</button>
+    <span class="logo">MyMultyScreen</span>
+    <span class="sp"></span>
+    <input id="q" type="search" placeholder="Cerca…">
+    <button id="pickbtn" class="pri" data-pk="1" title="Cosa guardo stasera? (S)">cosa guardo stasera?</button>
+    <button id="add" class="pri">aggiungi</button>
+    <details id="mn">
+      <summary>dati</summary><div>
+      <button data-x="prot">Protezione dati</button>
+      <button data-x="ics">Esporta uscite (.ics)</button>
+      <button data-x="json">Esporta JSON</button>
+      <button data-x="sql">Esporta SQL</button>
+      <button data-x="xlsx">Esporta Excel</button>
+      <button data-x="tmdb">Chiave TMDB</button>
+      <button data-x="rb">Chiave Rebrickable</button>
+      <button data-x="imp">Importa backup (JSON/Excel)</button>
+      <button data-x="reset" class="dg">↺ Ripristina dati originali</button>
+      </div>
+    </details>
+    <button id="usr-btn" class="user-pill" title="Gestione Account">account</button>
+    <button id="kbd" title="Scorciatoie da tastiera (?)">scorciatoie</button>
+    <button id="th" title="Tema">tema</button>
+    <input id="fi" type="file" accept=".json,.xlsx" hidden>
+  </header>
+  <aside id="side">
+    <nav id="nav"></nav>
+  </aside>
+  <div id="scrim"></div>
+  <div id="wrap">
+    <main id="main"></main>
+    <footer class="tmf">
+      <img src="tmdb-logo.svg" alt="TMDB" height="16" onerror="this.remove()"><span>This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data provided by JustWatch.</span>
+    </footer>
+  </div>
+  <dialog id="dlg"></dialog>
+  <datalist id="pls"></datalist>
+  <datalist id="sgl"></datalist>
+  <datalist id="gnl"></datalist>
+  <div id="toast"></div>
+  <script src="script.js"></script>
+</body></html>
